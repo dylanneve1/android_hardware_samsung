@@ -113,7 +113,7 @@ static struct pcm_device_profile pcm_device_capture = {
 static struct pcm_device_profile pcm_device_capture_low_latency = {
     .config = {
         .channels = CAPTURE_DEFAULT_CHANNEL_COUNT,
-        .rate = CAPTURE_DEFAULT_SAMPLING_RATE,
+        .rate = CAPTURE_DEFAULT_SAMPLING_RATE_LOW_LATENCY,
         .period_size = CAPTURE_PERIOD_SIZE_LOW_LATENCY,
         .period_count = CAPTURE_PERIOD_COUNT_LOW_LATENCY,
         .format = PCM_FORMAT_S16_LE,
@@ -4166,11 +4166,8 @@ static int adev_set_parameters(struct audio_hw_device *dev, const char *kvpairs)
                             value,
                             sizeof(value));
     if (ret >= 0) {
-        /* TODO: Add support in voice calls */
         if (strcmp(value, AUDIO_PARAMETER_VALUE_ON) == 0) {
             adev->voice.bluetooth_wb = true;
-            ALOGI("%s: Implement support for BT SCO wideband calls!!!",
-                  __func__);
         } else {
             adev->voice.bluetooth_wb = false;
         }
@@ -4580,6 +4577,7 @@ static int adev_open(const hw_module_t *module, const char *name,
     adev->voice.volume = 1.0f;
     adev->voice.bluetooth_nrec = true;
     adev->voice.in_call = false;
+    adev->voice.bluetooth_wb = false;
 
     /* adev->cur_hdmi_channels = 0;  by calloc() */
     adev->snd_dev_ref_cnt = calloc(SND_DEVICE_MAX, sizeof(int));
